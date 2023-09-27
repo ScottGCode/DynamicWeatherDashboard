@@ -1,0 +1,83 @@
+/* Apply styles to the body and container */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: gray;
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid {
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    background: rgb(98,93,175);
+    background: linear-gradient(90deg, rgba(98,93,175,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    color: #fff;
+    padding: 30px;
+    margin-bottom: 0;
+}
+
+.search {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#cityInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#searchButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Weather info and forecast styling */
+.weather-info, .forecast {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+/* List styling */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 5px 0;
+}
+
+/* Forecast item styling */
+.forecast-item {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+/* Responsive layout for mobile devices */
+@media (max-width: 768px) {
+    .search {
+        margin-bottom: 10px;
+    }
+
+    .weather-info, .forecast {
+        margin-bottom: 10px;
+    }
+}
