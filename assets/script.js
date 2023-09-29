@@ -12,6 +12,7 @@ var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=chicago&appid=fa
 
 searchButton.addEventListener('click', function () {
     var city = cityValue.value.trim(); 
+    console.log(city);
 
     if (city === '') {
         window.alert('Please enter a city name.');
@@ -23,16 +24,18 @@ var apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${
 
 // Function to display weather data in html. 
 function displayWeatherData(data) {
-    var { name, main, weather, wind, humidity } = data;
+    console.log(data);
+    var { name, main, weather } = data;
     var temperature = main.temp;
     var weatherDescription = weather[0].description;
-    var humidityEl = main.humidity;
+    var windSpeed = data.wind.speed;
+    var humidityLevel = main.humidity;
 
     weatherData.innerHTML = `
         <h2>in ${name}</h2>
         <p>Temperature: ${temperature}°F</p>
-        <p>Wind: ${wind}mph</p>
-        <p>Humidity: ${humidity}%</p>
+        <p>Wind: ${windSpeed}mph</p>
+        <p>Humidity: ${humidityLevel}%</p>
         <p>Condition: ${weatherDescription}</p>
     `;
 }
@@ -40,9 +43,9 @@ function displayWeatherData(data) {
    // Fetch weather data and display. 
    fetch(apiUrl)
    .then(response => {
-       if (!response.ok) {
-           throw new Error('City not found');
-       }
+ //      if (!response.ok) {
+    //        throw new Error('City not found');
+    //    }
        return response.json();
    })
    .then(data => {
