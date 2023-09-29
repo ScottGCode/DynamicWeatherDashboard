@@ -24,23 +24,30 @@
       <div class="row">
         <div class="col-md-4">
           <div class="search">
-            <input type="text" id="cityInput" class="form-control" placeholder="enter any city here"/>
-            <button id="searchButton" class="btn btn-outline-primary mt-2">Search</button>
+            <input
+              type="text"
+              id="cityValue"
+              class="form-control"
+              placeholder="enter any city here"
+            />
+            <button id="searchButton" class="btn btn-outline-primary mt-2">
+              Search
+            </button>
           </div>
           <div class="search-history mt-4">
             <h2>Search History</h2>
-            <ul id="historyList" class="list-group"></ul>
+            <ul id="searchHistory" class="list-group"></ul>
           </div>
         </div>
         <div class="col-md-8">
           <main>
             <div class="weather-info">
               <h2>Current Weather</h2>
-              <div id="weatherResult"></div>
+              <div id="weatherData"></div>
             </div>
             <div class="forecast mt-4">
               <h2>5-Day Forecast</h2>
-              <div id="forecastResult"></div>
+              <div id="forecastData"></div>
             </div>
           </main>
         </div>
