@@ -8,21 +8,19 @@ var apiKey = 'fabb2fdea9e337183e448943fab19d82';
 var apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=chicago&appid=fabb2fdea9e337183e448943fab19d82'
 var city;
 
-// Event listener for the search button. Get city value. Display error if input is empty. 
+// Event listener for the search button.
 searchButton.addEventListener('click', function () {
    city = cityValue.value.trim(); 
 
   if (city === '') {
-       window.alert('Please enter a city name.');
     return;
     }
     
-    // Construct the API URL with the user's input.
+// Weather api with parameters set to user inputs.
 var apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
 
 // Function to display weather data in html. 
 function displayWeatherData(data) {
-    console.log(data);
     var { name, main, weather } = data;
     var temperature = main.temp;
     var weatherDescription = weather[0].description;
@@ -41,9 +39,6 @@ function displayWeatherData(data) {
 // Fetch weather data and display. 
    fetch(apiUrl)
    .then(response => {
- //      if (!response.ok) {
-    //        throw new Error('City not found');
-    //    }
        return response.json();
    })
    .then(data => {
@@ -52,15 +47,23 @@ function displayWeatherData(data) {
        saveSearchHistory();
    })
    .catch(error => {
-       console.error('Error:', error);
-       window.alert('City not found. Please enter a valid city name.');
+       window.alert('Please enter a valid city name.');
    });
 });
 
-//Function to add city input to search history as button.
+//Function to add city input to search history as button with a clickable link.
 function addToSearchHistory(city) {
-    var listItem = document.createElement('button');
+    var listItem = document.createElement('a');
     listItem.textContent = city;
+    listItem.dataset.city = city;
+    listItem.href = '#';
+    listItem.classList.add('history-link');
+    listItem.addEventListener('click', function () {
+// When a history link is clicked, perform a new weather search for that city
+        searchWeatherForCity(city);
+        displayWeatherData();
+    });
+    listItem.dataset.city = city;
     searchHistory.appendChild(listItem);
 }
 
@@ -85,17 +88,17 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 searchButton.addEventListener('click', function () {
-    const city = cityValue.value.trim(); // Get the city input value
+    var city = cityValue.value.trim(); 
 
     if (city === '') {
         alert('Please enter a city name.'); // Display an alert if the input is empty
         return;
     }
 
-    // Construct the API URL with the user's input for current weather
-    const currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+// Construct the API URL with the user's input for current weather
+    var currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
 
-    // Fetch current weather data for the user's input
+// Fetch current weather data for the user's input
     fetch(currentWeatherUrl)
         .then(response => {
             if (!response.ok) {
@@ -104,15 +107,12 @@ searchButton.addEventListener('click', function () {
             return response.json();
         })
         .then(data => {
-            // Display the current weather data on the page
+// Display the current weather data on the page
             displayWeatherData(data);
-            // Add the city to the search history
-            addToSearchHistory(city);
 
-            // Construct the API URL with the user's input for the 5-day forecast
-            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+// Construct the API URL with the user's input for the 5-day forecast
+            var forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
 
-            // Fetch the 5-day forecast data
             return fetch(forecastUrl);
         })
         .then(response => {
@@ -122,45 +122,81 @@ searchButton.addEventListener('click', function () {
             return response.json();
         })
         .then(data => {
-            // Display the 5-day forecast data on the page
             displayForecastData(data);
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('City not found. Please enter a valid city name.');
-        });
 });
 
 // Function to display weather data
 function displayWeatherData(data) {
-    // Display current weather data as before
-    // ...
+  
 }
 
-// Function to display the 5-day forecast data
 function displayForecastData(data) {
-    const forecastList = data.list;
+    var forecastList = data.list;
+    let dailyForecasts = {};
+
+    // Loop through the forecast list and group by date
+    for (var forecast of forecastList) {
+        var timestamp = forecast.dt * 1000;
+        var date = new Date(timestamp);
+        var dayKey = date.toLocaleDateString('en-US', { weekday: 'long' });
+
+        if (!dailyForecasts[dayKey]) {
+            dailyForecasts[dayKey] = {
+                dayOfWeek: dayKey,
+                temperature: forecast.main.temp,
+                weatherDescription: forecast.weather[0].description,
+            };
+        }
+    }
+
+    // Create HTML for the 5-day forecast
     let forecastHTML = '';
-
-    for (const forecast of forecastList) {
-        const timestamp = forecast.dt * 1000;
-        const date = new Date(timestamp);
-        const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
-        const temperature = forecast.main.temp;
-        const weatherDescription = forecast.weather[0].description;
-
+    for (var dayKey in dailyForecasts) {
+         var { dayOfWeek, temperature, weatherDescription } = dailyForecasts[dayKey];
+   
         forecastHTML += `
             <div class="forecast-item">
                 <p>${dayOfWeek}</p>
-                <p>Temp: ${temperature}°C</p>
+                <p>Temp: ${temperature}°F</p>
                 <p>${weatherDescription}</p>
             </div>
         `;
     }
 
     forecastData.innerHTML = `
-        <h2>5-Day Forecast</h2>
+        <h2>5-Day Forecast for ${city}</h2>
         ${forecastHTML}
     `;
 }
 
+function searchWeatherForCity(city) {
+    var currentWeatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
+
+    fetch(currentWeatherUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('City not found');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayWeatherData(data);
+            addToSearchHistory(city);
+            var forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
+            return fetch(forecastUrl);
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Forecast not available for this city');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayForecastData(data, city);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('City not found. Please enter a valid city name.');
+        });
+}
